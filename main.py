@@ -4,9 +4,9 @@ import os
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
-# inp = input("Which year do you want to travel to?  Type the date in this format YYYY-MM-DD:\n")
+inp = input("Input URL to Apple Music Playlist:\n")
 
-response = requests.get("https://music.apple.com/us/playlist/study-beats/pl.a4e197979fc74b2a91b3cdf869f12aa5")
+response = requests.get(inp)
 response.raise_for_status()
 webpage = response.text
 soup = BeautifulSoup(webpage, "html.parser")
@@ -38,5 +38,10 @@ for i in range(len(song_artists)):
 user_id = sp.current_user()['id']
 
 playlist = sp.user_playlist_create(user=user_id, name=playlist_title.text.split('\n')[1],
-                                   public=False, description=playlist_description.text)
+                                   public=False, description=playlist_description.text, )
 sp.playlist_add_items(playlist_id=playlist['id'], items=spotify_songs)
+
+# Testing automated cover art transfer
+# headers = {"Authorization": os.environ.get("access_token"),
+#            "Content-Type": "image/jpeg"}
+# requests.put(url="https://api.spotify.com/v1/playlists/" + playlist["id"] + "/images", headers=headers)
