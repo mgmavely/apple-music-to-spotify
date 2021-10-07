@@ -15,6 +15,7 @@ playlist_info = soup.find_all(name="div", class_="songs-list-row__song-name-wrap
 song_names = [i.text.split('\n')[1] for i in playlist_info]
 song_artists = [i.text.split('\n')[5] for i in playlist_info]
 playlist_title = soup.find(name="h1", class_="product-name typography-large-title-semibold clamp-4")
+playlist_description = soup.find(name="p")
 
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     scope="playlist-modify-private",
@@ -37,5 +38,5 @@ for i in range(len(song_artists)):
 user_id = sp.current_user()['id']
 
 playlist = sp.user_playlist_create(user=user_id, name=playlist_title.text.split('\n')[1],
-                                   public=False)
+                                   public=False, description=playlist_description.text)
 sp.playlist_add_items(playlist_id=playlist['id'], items=spotify_songs)
