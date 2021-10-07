@@ -14,7 +14,7 @@ soup = BeautifulSoup(webpage, "html.parser")
 playlist_info = soup.find_all(name="div", class_="songs-list-row__song-name-wrapper")
 song_names = [i.text.split('\n')[1] for i in playlist_info]
 song_artists = [i.text.split('\n')[5] for i in playlist_info]
-# print(song_artists)
+playlist_title = soup.find(name="h1", class_="product-name typography-large-title-semibold clamp-4")
 
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     scope="playlist-modify-private",
@@ -25,7 +25,7 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     cache_path="token.txt"
 
 ))
-# print("OK?")
+
 spotify_songs = []
 for i in range(len(song_artists)):
     item = sp.search(q=f"track:{song_names[i]} artist:{song_artists[i]}", limit=1)
@@ -36,6 +36,6 @@ for i in range(len(song_artists)):
 
 user_id = sp.current_user()['id']
 
-playlist = sp.user_playlist_create(user=user_id, name=f"Apple Music -> Spotify",
+playlist = sp.user_playlist_create(user=user_id, name=playlist_title.text.split('\n')[1],
                                    public=False)
 sp.playlist_add_items(playlist_id=playlist['id'], items=spotify_songs)
